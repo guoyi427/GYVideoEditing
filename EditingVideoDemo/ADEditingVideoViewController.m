@@ -110,11 +110,17 @@
 }
 
 - (void)_playVideo {
-    [_player pause];
     [_player seekToTime:CMTimeMake(_startTime, 1)];
+    [_player pause];
     [_player play];
     CGFloat duration = _endTime - _startTime;
-    [self performSelector:@selector(playDidFinishedNotification) withObject:nil afterDelay:duration];
+    [self performSelector:@selector(_stopVideo) withObject:nil afterDelay:duration];
+}
+
+- (void)_stopVideo {
+    [self _playVideo];
+//    [_player pause];
+//    [self performSelector:@selector(_playVideo) withObject:nil afterDelay:1];
 }
 
 #pragma mark - VideoSliderView - Delegate
