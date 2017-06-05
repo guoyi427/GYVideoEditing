@@ -25,6 +25,7 @@
     CGFloat _startTime;
     CGFloat _endTime;
     
+    NSTimer *_endTimer;
     
 }
 @end
@@ -110,17 +111,24 @@
 }
 
 - (void)_playVideo {
-    [_player seekToTime:CMTimeMake(_startTime, 1)];
     [_player pause];
+//    _player = nil;
+//    _player = [AVPlayer playerWithURL:_url];
+//    _playerLayer.player = _player;
+    
+    [_player seekToTime:CMTimeMake(_startTime, 1)];
     [_player play];
     CGFloat duration = _endTime - _startTime;
-    [self performSelector:@selector(_stopVideo) withObject:nil afterDelay:duration];
+
+    
+    if (_endTimer) {
+        [_endTimer invalidate];
+    }
+    _endTimer = [NSTimer scheduledTimerWithTimeInterval:duration target:self selector:@selector(_stopVideo) userInfo:nil repeats:false];
 }
 
 - (void)_stopVideo {
     [self _playVideo];
-//    [_player pause];
-//    [self performSelector:@selector(_playVideo) withObject:nil afterDelay:1];
 }
 
 #pragma mark - VideoSliderView - Delegate
@@ -132,6 +140,7 @@
 }
 
 - (void)videoSliderViewDidUpdateTime:(ADVideoSliderView *)view {
+   
     [self _playVideo];
 }
 
@@ -139,7 +148,7 @@
 
 - (void)playDidFinishedNotification {
     if (_player.timeControlStatus != AVPlayerTimeControlStatusPlaying) {
-        [self _playVideo];
+
     }
 }
 
